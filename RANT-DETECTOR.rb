@@ -86,39 +86,62 @@ unless DB.table_exists?(:rants)
 end
 
 
-puts "CONTACTING INTERNETS..."
 # url = "http://www.kanyeuniversecity.com/blog/"
-url = "http://www.kanyeuniversecity.com/blog/?em3106=0_-1__-1_~0_-1_5_2009_0_10&em3298=&em3282=&em3281=&em3161="
+# page w/ yesterday's twitter rant
+# url = "http://www.kanyeuniversecity.com/blog/?em3106=0_-1__-1_~0_-1_5_2009_0_10&em3298=&em3282=&em3281=&em3161="
+# last page...
+url = "http://www.kanyeuniversecity.com/blog/?em3106=0_-1__-1_~0_-1_5_2009_0_4820&em3298=&em3282=&em3281=&em3161="
+
+puts "CONTACTING INTERNETS... #{url}"
 agent = WWW::Mechanize.new
 agent.user_agent = "KANYE RANT DETECTOR <http://fffff.at>"
 # agent.user_agent_alias = "Mac Safari"
 page = agent.get(url)
 
+# FOR PROPER ARCHIVAL
+reverse_pagination = true
 
 # DETECT KANYES GOGOGOGO
-(page/'.rapper').each { |post|
+first = 0 # GETS OVERRIDDEN
+loop {
+  (page/'.rapper').each { |post|
       
-  excerpt = post.content[0..100].gsub("\n",'').gsub("\t",'').chomp
-  permalink = url+(post/'a').first['href']
-  text = (post/'h5').first.content.strip_html
-  puts "PROCESSING: #{excerpt} ..."
+    excerpt = post.content[0..100].gsub("\n",'').gsub("\t",'').chomp
+    permalink = url+(post/'a').first['href']
+    text = (post/'h5').first.content.strip_html
+    puts "PROCESSING: #{excerpt} ..."
 
-  # FOUND A SHORTCUT: ONLY RANTS ARE IN SPECIFIED ELEMENT
-  content = (post/'h5 div').first.content rescue ''
+    # FOUND A SHORTCUT: ONLY RANTS ARE IN SPECIFIED ELEMENT
+    content = (post/'h5 div').first.content rescue ''
 
-  # TELL THE MAFACKIN WORLD
-  # BONUS: DO IT WITH AUTOTUNE
-  if !content.empty? && content.length > MINIMUM_RANT_LENGTH
-    shorturl = bitlyfy(permalink)    
-    msg = "KANYERANT! \"#{excerpt}\": #{shorturl}"
+    # TELL THE MAFACKIN WORLD
+    # BONUS: DO IT WITH AUTOTUNE
+    if !content.empty? && content.length > MINIMUM_RANT_LENGTH
+      shorturl = bitlyfy(permalink)    
+      msg = "KANYERANT! \"#{excerpt}\": #{shorturl}"
 
-    # ONLY ANNOUNCE ON SUCCESFUL SAVE TO DB
-    announce(msg) if save(msg, permalink, shorturl)
-    puts "..."
+      # ONLY ANNOUNCE ON SUCCESFUL SAVE TO DB
+      announce(msg) if save(msg, permalink, shorturl)
+      puts "..."
     
-  end
+      sleep 5
+    
+    end
+    
+  }
+
+  # RECURSE PAGES... THEY POST A LOT
+  current = (page/'#emodpages strong')[1].content.to_i
+  first = current if first == 0
+  puts "current = #{current.inspect} -- first = #{first.inspect}"
+  prev = (page/'#emodpages a').select { |e| e.content.strip_html.to_i == (reverse_pagination ? current - 1 : current + 1) }
+  puts "prev = #{prev}"
+  break if prev.blank?
   
-  # TODO: RECURSE PAGES... THEY POST A LOT
+  sleep 3
+  page = agent.click(prev.first)
+  puts "---- loaded page #{prev} -----"
+
 }
 
 
