@@ -1,9 +1,10 @@
+#!/usr/bin/env ruby
+#
 # F.A.T. LAB
-# KANYE WEB TOOLS
-# RANT DETECTOR 1.0
+# KANYE RANT DETECTOR 1.1
 #
 # SUBJECT'S ALLCAPS BLOG POSTS ALERTED TO TWITTER <HTTP://TWITTER.COM/KANYERANTS>
-# JAMIE DUBS <HTTP://JAMIEDUBS.COM>
+# BY JAMIE DUBS <HTTP://JAMIEDUBS.COM>
 
 # YEEZY'S RSS DOES NOT CONTAIN FULLTEXT 
 # WHICH WOULD HAVE MADE THIS MAD EASIER
@@ -18,9 +19,8 @@ require 'logger' # FOR CHOPPING WOOD
 require 'cgi' # FOR CGI.escape -_-
 
 
-# MIN RANTITTUDE -- AVOID FALSE POSITIVES
+# RANTITTUDE -- AVOID FALSE POSITIVES
 MINIMUM_RANT_LENGTH = 500
-
 
 # WAS THIS TEXT WRITTEN BY KANYE? Y/N
 def kanye?(text)
@@ -92,15 +92,17 @@ unless DB.table_exists?(:rants)
 end
 
 
-# url = "http://www.kanyeuniversecity.com/blog/"
-# page w/ yesterday's twitter rant
-# url = "http://www.kanyeuniversecity.com/blog/?em3106=0_-1__-1_~0_-1_5_2009_0_10&em3298=&em3282=&em3281=&em3161="
-
-# last page...
+# select our URL! frontpage only:
 base = "http://www.kanyeuniversecity.com/blog/"
-url = "#{base}?em3106=0_-1__-1_~0_-1_5_2009_0_4820&em3298=&em3282=&em3281=&em3161="
-# REBOOT -> Last page
-# url = "http://www.kanyeuniversecity.com/blog/?em3106=0_-1__-1_~0_-1_5_2009_0_4820&em3298=&em3282=&em3281=&em3161="
+url = base
+# page w/ yesterday's twitter rant
+#url = "http://www.kanyeuniversecity.com/blog/?em3106=0_-1__-1_~0_-1_5_2009_0_10&em3298=&em3282=&em3281=&em3161="
+# Last (first) page -- start from the beginning
+#url = "#{base}?em3106=0_-1__-1_~0_-1_5_2009_0_4820&em3298=&em3282=&em3281=&em3161="
+# page 245
+#url = "#{base}?em3106=0_-1__-1_~0_-1_5_2009_0_2530&em3298=&em3282=&em3281=&em3161="
+# pre-latest rant...
+#url = "#{base}?em3106=0_-1__-1_~0_-1_5_2009_0_90&em3298=&em3282=&em3281=&em3161="
 
 STDERR.puts "CONTACTING INTERNETS... #{url}"
 agent = WWW::Mechanize.new
@@ -115,7 +117,9 @@ reverse_pagination = true
 first = 0 # GETS OVERRIDDEN
 loop {
   # IN REVERSE MODE...
-  (page/'.rapper').to_a.reverse.each { |post|
+  posts = (page/'.rapper').to_a.reverse
+  puts "PROCESSING #{posts.length} POSTS ..."
+  posts.each { |post|
 
     content = post.content.strip!
     excerpt = post.content[0..120].gsub("\n",'').gsub("\t",'').strip!
@@ -163,7 +167,7 @@ loop {
   end
   
   page = agent.click(link)
-  puts "---- loaded page #{pagenum} ----- #{link['href']}"
+  puts "---- LOADED PAGE #{pagenum} ----- #{link['href']}"
 
 }
 
