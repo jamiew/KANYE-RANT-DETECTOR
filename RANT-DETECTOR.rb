@@ -75,7 +75,7 @@ end
 
 # ------ WORK IT GIRL --------
 
-STDERR.puts "INITIALIZING DATABASE..."
+puts "INITIALIZING DATABASE..."
 
 
 # INITIALIZE OUR RANTERBASE
@@ -104,7 +104,7 @@ url = base
 # pre-latest rant...
 #url = "#{base}?em3106=0_-1__-1_~0_-1_5_2009_0_90&em3298=&em3282=&em3281=&em3161="
 
-STDERR.puts "CONTACTING INTERNETS... #{url}"
+puts "CONTACTING INTERNETS... #{url}"
 agent = WWW::Mechanize.new
 # agent.user_agent = "KANYE RANT DETECTOR <http://fffff.at>"
 agent.user_agent_alias = "Mac Safari"
@@ -154,7 +154,7 @@ loop {
   # puts "current = #{current.inspect} -- first = #{first.inspect}"
   prev = (page/'#emodpages a').select { |e| e.content.strip_html.to_i == (reverse_pagination ? current - 1 : current + 1) }
   if prev.blank? or prev.first.nil?
-    STDERR.puts "No prev link!"
+    puts "No prev link!"
     break
   end
   
@@ -162,7 +162,7 @@ loop {
   link = prev.first
   pagenum = link.content.strip_html.to_i
   if pagenum.blank? || pagenum < 1
-    STDERR.puts "Pagenum #{pagenum} is the end of the road! We're done here"
+    puts "Pagenum #{pagenum} is the end of the road! We're done here"
     break 
   end
   
