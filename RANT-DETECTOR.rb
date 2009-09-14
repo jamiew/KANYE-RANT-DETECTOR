@@ -20,7 +20,7 @@ require 'cgi' # FOR CGI.escape -_-
 
 
 # RANTITTUDE -- AVOID FALSE POSITIVES
-MINIMUM_RANT_LENGTH = 500
+MINIMUM_RANT_LENGTH = 150
 
 # WAS THIS TEXT WRITTEN BY KANYE? Y/N
 def kanye?(text)
@@ -45,7 +45,7 @@ def announce(msg, url)
   
   text = "\"#{msg}\": #{url}"
   puts "ANNOUNCE: #{text}"
-  @config ||= YAML.load(File.open('config.yml'))
+  @config ||= YAML.load(File.open(File.dirname(__FILE__)+'/config.yml'))
   raise "No config file!" if @config.blank?
 
   # post to twitter...
