@@ -106,9 +106,16 @@ url = base
 
 puts "CONTACTING INTERNETS... #{url}"
 agent = WWW::Mechanize.new
+agent.read_timeout = 30
 # agent.user_agent = "KANYE RANT DETECTOR <http://fffff.at>"
 agent.user_agent_alias = "Mac Safari"
-page = agent.get(url)
+retries = 3
+begin
+  page = agent.get(url)
+rescue Exception # Timeout::Error does not derive from StandardException, I h8 it O_o
+  STDERR.puts "ERROR FETCHING: #{$!}   RETRIES REMAINING: #{retries}"
+  retry if (retries -= 1) > 0
+end
 
 # FOR PROPER ARCHIVAL
 reverse_pagination = true
@@ -117,7 +124,12 @@ reverse_pagination = true
 first = 0 # GETS OVERRIDDEN
 loop {
   # IN REVERSE MODE...
-  posts = (page/'.rapper').to_a.reverse
+  posts = (page/'.rapper').to_a.reverse rescue nil
+  if posts.blank?
+    STDERR.puts "ERROR: NO POSTS ON PAGE; ABORTING..."
+    exit 1 # Our whole purpose is to parse this page; bail
+  end
+
   puts "PROCESSING #{posts.length} POSTS ..."
   posts.each { |post|
 
