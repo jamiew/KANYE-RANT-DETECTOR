@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 #
 # F.A.T. LAB
-# KANYE RANT DETECTOR 1.1
+# KANYE RANT DETECTOR 1.2
 #
 # SUBJECT'S ALLCAPS BLOG POSTS ALERTED TO TWITTER <HTTP://TWITTER.COM/KANYERANTS>
 # BY JAMIE DUBS <HTTP://JAMIEDUBS.COM>
@@ -9,6 +9,10 @@
 # YEEZY'S RSS DOES NOT CONTAIN FULLTEXT 
 # WHICH WOULD HAVE MADE THIS MAD EASIER
 
+# CHANGELOG:
+# 1.2 - Yeezy switched to WordPress! Minor URL & page changes
+#       p.s. he also has his http://kanyewest.com blog we'll want to track!
+#
 
 require 'rubygems'
 require 'yaml'
