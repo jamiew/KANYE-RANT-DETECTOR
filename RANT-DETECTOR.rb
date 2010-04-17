@@ -9,6 +9,7 @@
 # YEEZY'S RSS DOES NOT CONTAIN FULLTEXT 
 # WHICH WOULD HAVE MADE THIS MAD EASIER
 
+
 require 'rubygems'
 require 'yaml'
 require 'mechanize' # FOR PARSING KANYEBLOG
@@ -52,7 +53,6 @@ def announce(msg, url)
   httpauth = Twitter::HTTPAuth.new(@config['username'], @config['password'])
   twitter = Twitter::Base.new(httpauth)
   twitter.update(text)
-    
 end
 
 
@@ -76,9 +76,6 @@ end
 # ------ WORK IT GIRL --------
 
 puts "INITIALIZING DATABASE..."
-
-
-# INITIALIZE OUR RANTERBASE
 DB = Sequel.sqlite 'kanyerants.db'
 unless DB.table_exists?(:rants)
   DB.create_table :rants do
@@ -91,24 +88,14 @@ unless DB.table_exists?(:rants)
   end
 end
 
-
-# select our URL! frontpage only:
+# Select our starting URL
 base = "http://www.kanyeuniversecity.com/blog/"
 url = base
-# page w/ yesterday's twitter rant
-#url = "http://www.kanyeuniversecity.com/blog/?em3106=0_-1__-1_~0_-1_5_2009_0_10&em3298=&em3282=&em3281=&em3161="
-# Last (first) page -- start from the beginning
-#url = "#{base}?em3106=0_-1__-1_~0_-1_5_2009_0_4820&em3298=&em3282=&em3281=&em3161="
-# page 245
-#url = "#{base}?em3106=0_-1__-1_~0_-1_5_2009_0_2530&em3298=&em3282=&em3281=&em3161="
-# pre-latest rant...
-#url = "#{base}?em3106=0_-1__-1_~0_-1_5_2009_0_90&em3298=&em3282=&em3281=&em3161="
 
 puts "CONTACTING INTERNETS... #{url}"
-agent = WWW::Mechanize.new
+agent = Mechanize.new
+agent.user_agent = "KANYE RANT DETECTOR <http://twitter.com/kanyerants>"
 agent.read_timeout = 30
-# agent.user_agent = "KANYE RANT DETECTOR <http://fffff.at>"
-agent.user_agent_alias = "Mac Safari"
 retries = 3
 begin
   page = agent.get(url)
@@ -121,7 +108,7 @@ end
 reverse_pagination = true
 
 # DETECT KANYES GOGOGOGO
-first = 0 # GETS OVERRIDDEN
+first = 0
 loop {
   # IN REVERSE MODE...
   posts = (page/'.rapper').to_a.reverse rescue nil
@@ -161,7 +148,7 @@ loop {
   }
 
   # RECURSE PAGES... THEY POST A LOT
-  current = (page/'#emodpages strong')[1].content.to_i
+  current = (page/'#emodpages span.current')[0].content.to_i
   first = current if first == 0
   # puts "current = #{current.inspect} -- first = #{first.inspect}"
   prev = (page/'#emodpages a').select { |e| e.content.strip_html.to_i == (reverse_pagination ? current - 1 : current + 1) }
