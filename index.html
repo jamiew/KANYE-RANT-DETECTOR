@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Kanye Rant Detector</title>
+  <link rel="shortcut icon" href="/favicon.ico">
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; line-height: 1.6; background: #111; color: #eee; }
+    h1 { margin-bottom: 0.2em; text-transform: uppercase; }
+    .subtitle { color: #888; margin-bottom: 2em; font-size: 0.9em; }
+    a { color: #ffcc00; }
+    a:hover { color: #ffdd44; }
+    .twitter-link { font-size: 1.5em; display: inline-block; margin: 1em 0; }
+    blockquote { border-left: 3px solid #ffcc00; padding-left: 1em; margin-left: 0; color: #ccc; font-style: italic; }
+    code { background: #222; padding: 2px 6px; }
+    .note { background: #1a1a1a; padding: 1em; border-left: 3px solid #ffcc00; margin: 1em 0; }
+  </style>
+</head>
+<body>
+  <h1>Kanye Rant Detector</h1>
+  <p class="subtitle">F.A.T. Lab, 2009</p>
+
+  <p class="twitter-link"><a href="https://twitter.com/kanyerants">@kanyerants</a></p>
+
+  <p>A Twitter bot that alerts you when Kanye is using ALLCAPS on his blog.</p>
+
+  <blockquote>
+    "SUBJECT'S ALLCAPS BLOG POSTS ALERTED TO TWITTER"
+  </blockquote>
+
+  <div class="note">
+    <strong>Note:</strong> This bot monitored Kanye's old blog at kanyeuniversecity.com which no longer exists.
+    The <a href="https://twitter.com/kanyerants">@kanyerants Twitter account</a> remains as an archive of detected rants from 2009-2010.
+  </div>
+
+  <h2>How it worked</h2>
+  <p>The Ruby script would:</p>
+  <ul>
+    <li>Scrape Kanye's blog for new posts</li>
+    <li>Check if the text was ALL CAPS (the <code>kanye?(text)</code> function)</li>
+    <li>If a rant was detected, shorten the URL via bit.ly and post to Twitter</li>
+    <li>Store found rants in a SQLite database to avoid duplicates</li>
+  </ul>
+
+  <h2>Links</h2>
+  <ul>
+    <li><a href="https://twitter.com/kanyerants">@kanyerants on Twitter</a></li>
+    <li><a href="https://github.com/jamiew/KANYE-RANT-DETECTOR">Source code on GitHub</a></li>
+    <li><a href="http://fffff.at/kanye-rant-detector/">Original F.A.T. Lab blog post</a></li>
+  </ul>
+
+  <p>Made by <a href="http://jamiedubs.com">Jamie Wilkinson</a> / <a href="http://fffff.at">F.A.T. Lab</a></p>
+</body>
+</html>
